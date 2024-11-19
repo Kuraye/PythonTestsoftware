@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE-edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Add comments</title>
+        <style>
+            table {border-collapse: collapse;}
+            tr {border:  1px black solid;}
+            td {padding: 10px;}
+            span {display: inline-block; vertical-align: middle;}
+        </style>
+    </head>
+
+    <body>
+       <table>
+            {% for item in list %}
+            <tr>
+                <td><p>ORIGINAL!!!! File name: <b>{{item.name}}</b></p></td>
+                <td><span style="border: 1px grey dotted;">{{item.svg | safe}}</span></td>
+                <td>
+                    <form action="{{ url_for('addedComments')}}" method="POST" enctype="multipart/form-data">
+                        <p>Ontwerper: {{formData[1]}}</p>
+                        <p>Naam ontwerp: {{formData[0]}}</p>
+                        <label>Naam onderdeel: </label><input name="description" value="{{item.description}}" placeholder="Voeg een naam voor het onderdeel toe">
+                        <textarea name="extraInfo" placeholder="Voeg extra informatie toe!">{{item.additionalDescription}}</textarea>
+                        <input name="itemID" type="hidden" value="{{item.name}}">
+                        <input type="submit" value="Informatie updaten">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+       </table>
+       <form action="/finalize" method="post">
+        <input type="submit" value="Maak bestanden aan">
+    </form>
+    </body>
+</html>
