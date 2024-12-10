@@ -1,7 +1,7 @@
 pipeline {
     agent {
         // Use a Python Docker image as the build agent
-        docker { image 'python:3.9' }
+        docker { image 'python:3.10.16' }
     }
 
     stages {
