@@ -1,9 +1,9 @@
 pipeline {
     agent any
 
-    environment {       
-        PYTHON_HOME = '/usr/bin/python3'  
-        PIP_HOME = '/usr/bin/pip3'  
+    environment {
+        PYTHON_HOME = '/usr/bin/python3'
+        PIP_HOME = '/usr/bin/pip3' 
     }
 
     stages {
@@ -17,10 +17,13 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        $PYTHON_HOME -m venv venv  # Create a virtual environment
-                        source venv/bin/activate   # Activate the virtual environment
-                        pip install --upgrade pip  # Upgrade pip
-                        pip install flask flask-wtf wtforms werkzeug flask-session splitter creator  # Install required packages
+                        # Use bash shell explicitly to ensure source works
+                        /bin/bash -c "
+                            $PYTHON_HOME -m venv venv  # Create a virtual environment
+                            source venv/bin/activate   # Activate the virtual environment
+                            pip install --upgrade pip  # Upgrade pip
+                            pip install flask flask-wtf wtforms werkzeug flask-session splitter creator  # Install required packages
+                        "
                     '''
                 }
             }
@@ -29,8 +32,10 @@ pipeline {
         stage('Run Application') {
             steps {
                 sh '''
-                    source venv/bin/activate  # Activate the virtual environment
-                    python3 app.py  # Run your Python application
+                    /bin/bash -c "
+                        source venv/bin/activate  # Activate the virtual environment
+                        python3 app.py  # Run your Python application
+                    "
                 '''
             }
         }
