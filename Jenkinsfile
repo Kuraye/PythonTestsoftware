@@ -1,13 +1,14 @@
 pipeline {
-    agent {
-        // Use a Python Docker image as the build agent
-        docker { image 'python:3.10.16' }
+    agent any
+
+    environment {       
+        PYTHON_HOME = '/usr/bin/python3'  
+        PIP_HOME = '/usr/bin/pip3'  
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                // Checkout code from GitHub
                 git url: 'https://github.com/Kuraye/PythonTestsoftware.git', branch: 'main'
             }
         }
@@ -15,16 +16,11 @@ pipeline {
         stage('Set Up Python Environment') {
             steps {
                 script {
-                    // Install required Python packages
                     sh '''
-                        pip3 install --upgrade pip
-                        pip3 install flask
-                        pip3 install flask-wtf
-                        pip3 install wtforms
-                        pip3 install werkzeug
-                        pip3 install flask-session
-                        pip3 install splitter
-                        pip3 install creator
+                        $PYTHON_HOME -m venv venv  # Create a virtual environment
+                        source venv/bin/activate   # Activate the virtual environment
+                        pip install --upgrade pip  # Upgrade pip
+                        pip install flask flask-wtf wtforms werkzeug flask-session splitter creator  # Install required packages
                     '''
                 }
             }
@@ -32,17 +28,17 @@ pipeline {
 
         stage('Run Application') {
             steps {
-                // Run the application
-                sh 'python3 app.py'
+                sh '''
+                    source venv/bin/activate  # Activate the virtual environment
+                    python3 app.py  # Run your Python application
+                '''
             }
         }
     }
 
     post {
         always {
-            // Clean up workspace
             cleanWs()
         }
     }
 }
-
