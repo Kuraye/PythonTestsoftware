@@ -1,10 +1,13 @@
 pipeline {
-    agent any
+    agent {
+        // Use a Python Docker image as the build agent
+        docker { image 'python:3.9' }
+    }
 
     stages {
         stage('Clone Repository') {
             steps {
-                // Checkout code from the GitHub repository
+                // Checkout code from GitHub
                 git url: 'https://github.com/Kuraye/PythonTestsoftware.git', branch: 'main'
             }
         }
@@ -12,22 +15,9 @@ pipeline {
         stage('Set Up Python Environment') {
             steps {
                 script {
-                    // Ensure Python3 and pip3 are installed
-                    sh '''
-                        if ! command -v python3 &> /dev/null; then
-                            echo "Installing Python3"
-                            sudo apt-get update
-                            sudo apt-get install -y python3
-                        fi
-
-                        if ! command -v pip3 &> /dev/null; then
-                            echo "Installing pip3"
-                            sudo apt-get install -y python3-pip
-                        fi
-                    '''
-                    
                     // Install required Python packages
                     sh '''
+                        pip3 install --upgrade pip
                         pip3 install flask
                         pip3 install flask-wtf
                         pip3 install wtforms
@@ -42,7 +32,7 @@ pipeline {
 
         stage('Run Application') {
             steps {
-                // Run the application (adjust the entry point file as needed)
+                // Run the application
                 sh 'python3 app.py'
             }
         }
