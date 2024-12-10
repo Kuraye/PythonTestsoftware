@@ -1,47 +1,58 @@
 pipeline {
-  agent any
-  tools {
-    python '3.9.1'
-  }
-  stages {
-    stage('Clean Workspace') {
-      steps {
-        cleanWs()
-      }
-    }
+    agent any
 
-    stage('Checkout') {
-      steps {
-        git url: 'https://github.com/Kuraye/PythonTestsoftware.git'
-      }
-    }
-
-    stage('Install Dependencies') {
-      steps {
-        sh 'pip install -r requirements.txt'
-      }
-    }
-
-    stage('Build') {
-      steps {
-        sh 'python build.py' // Replace with your actual build script
-      }
-    }
-
-    stage('Test') {
-      steps {
-        sh 'pytest' // Adjust with pytest options if needed
-      }
-    }
-
-    stage('Deploy to Container') {
-      steps {
-        script {
-          // Replace with your specific container deployment steps
-          // (e.g., using Docker or other container orchestration tools)
-          echo 'Deploying...'
+    stages {
+        stage('Clone Repository') {
+            steps {
+                // Checkout code from the GitHub repository
+                git url: 'https://github.com/Kuraye/PythonTestsoftware.git', branch: 'main'
+            }
         }
-      }
+
+        stage('Set Up Python Environment') {
+            steps {
+                script {
+                    // Ensure Python3 and pip3 are installed
+                    sh '''
+                        if ! command -v python3 &> /dev/null; then
+                            echo "Installing Python3"
+                            sudo apt-get update
+                            sudo apt-get install -y python3
+                        fi
+
+                        if ! command -v pip3 &> /dev/null; then
+                            echo "Installing pip3"
+                            sudo apt-get install -y python3-pip
+                        fi
+                    '''
+                    
+                    // Install required Python packages
+                    sh '''
+                        pip3 install flask
+                        pip3 install flask-wtf
+                        pip3 install wtforms
+                        pip3 install werkzeug
+                        pip3 install flask-session
+                        pip3 install splitter
+                        pip3 install creator
+                    '''
+                }
+            }
+        }
+
+        stage('Run Application') {
+            steps {
+                // Run the application (adjust the entry point file as needed)
+                sh 'python3 app.py'
+            }
+        }
     }
-  }
+
+    post {
+        always {
+            // Clean up workspace
+            cleanWs()
+        }
+    }
 }
+
