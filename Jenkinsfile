@@ -12,7 +12,7 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        git url: 'https://github.com/Kuraye/PipelineSoftware.git'
+        git url: 'https://github.com/Kuraye/PythonTestsoftware.git'
       }
     }
 
