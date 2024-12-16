@@ -3,7 +3,8 @@ pipeline {
 
     environment {
         PYTHON_HOME = '/usr/bin/python3'
-        PIP_HOME = '/usr/bin/pip3' 
+        PIP_HOME = '/usr/bin/pip3'
+        VENV_DIR = 'venv'  // Virtual environment directory path
     }
 
     stages {
@@ -17,10 +18,10 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        # Use bash shell explicitly to ensure source works
+                        # Use bash shell to ensure virtual environment setup
                         /bin/bash -c "
-                            $PYTHON_HOME -m venv venv  # Create a virtual environment
-                            source venv/bin/activate   # Activate the virtual environment
+                            $PYTHON_HOME -m venv $VENV_DIR  # Create a virtual environment
+                            source $VENV_DIR/bin/activate   # Activate the virtual environment
                             pip install --upgrade pip  # Upgrade pip
                             pip install flask flask-wtf wtforms werkzeug flask-session splitter creator  # Install required packages
                         "
@@ -31,19 +32,22 @@ pipeline {
 
         stage('Run Application') {
             steps {
-                sh '''
-                    /bin/bash -c "
-                        source venv/bin/activate  # Activate the virtual environment
-                        python3 app.py  # Run your Python application
-                    "
-                '''
+                script {
+                    // Activate the virtual environment and run the app
+                    sh '''
+                        /bin/bash -c "
+                            source $VENV_DIR/bin/activate  # Activate the virtual environment
+                            python app.py  # Run your Python application
+                        "
+                    '''
+                }
             }
         }
     }
 
     post {
         always {
-            cleanWs()
+            cleanWs()  // Clean the workspace after the pipeline finishes
         }
     }
 }
