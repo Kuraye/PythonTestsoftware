@@ -24,6 +24,21 @@ pipeline {
                             source $VENV_DIR/bin/activate   # Activate the virtual environment
                             pip install --upgrade pip  # Upgrade pip
                             pip install flask flask-wtf wtforms werkzeug flask-session splitter  # Install required packages
+                            pip install PyPDF2 pytest  # Install PyPDF2 for PDF parsing and pytest for running tests
+                        "
+                    '''
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Activate the virtual environment and run pytest
+                    sh '''
+                        /bin/bash -c "
+                            source $VENV_DIR/bin/activate  # Activate the virtual environment
+                            pytest test.py  # Run your tests
                         "
                     '''
                 }
