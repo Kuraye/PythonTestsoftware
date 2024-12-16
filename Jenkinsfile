@@ -33,11 +33,11 @@ pipeline {
         stage('Run Application') {
             steps {
                 script {
-                    // Activate the virtual environment and run the app
+                    // Activate the virtual environment and run Flask app in the background
                     sh '''
                         /bin/bash -c "
                             source $VENV_DIR/bin/activate  # Activate the virtual environment
-                            python main.py  # Run your Python application
+                            nohup python main.py &  # Run Flask app in the background
                         "
                     '''
                 }
