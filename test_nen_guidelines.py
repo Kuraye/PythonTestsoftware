@@ -11,32 +11,40 @@ risk_treatment_plan_path = 'Risk_Treatment_Plan.csv'
 log_file_path = 'system.log'
 report_file = 'test_report.txt'
 
+# Function to write to the report file
 def write_to_report(content):
     with open(report_file, 'a') as f:
         f.write(content)
 
-# The PDF parsing function
+# Function to parse the PDF and extract text
 def parse_pdf(pdf_path):
-    with open(pdf_path, 'rb') as f:
-        reader = PyPDF2.PdfReader(f)
-        text = ''
-        for page in reader.pages:
-            text += page.extract_text().lower()  # Ensure text is in lowercase
-    return text
+    try:
+        with open(pdf_path, 'rb') as f:
+            reader = PyPDF2.PdfReader(f)
+            text = ''
+            for page in reader.pages:
+                text += page.extract_text().lower()  # Ensure text is in lowercase
+        return text
+    except Exception as e:
+        return ""  # Return an empty string if the file is unreadable
 
-@pytest.fixture
+# Session-scoped fixture to initialize the report only once
+@pytest.fixture(scope='session', autouse=True)
 def setup_report():
-    # Clear the report file at the start of the test
+    global non_compliance_list
+    non_compliance_list.clear()  # Clear the non-compliance list at the start
+    # Initialize the report
     with open(report_file, 'w') as f:
         f.write("This document exists as a report where you can see which guidelines you haven't implemented yet in the project. At the end of the list, you will be able to see which non-compliances you still have.\n")
-    yield  # Let the test run
-    # After the test, finalize by writing the non-compliance list
+    yield  # Allow tests to run
+    # Write the non-compliance list at the end of the session
     with open(report_file, 'a') as f:
         f.write("\nNon-Compliance List:\n")
         for item in non_compliance_list:
             f.write(f"- {item}\n")
 
-def test_pdf_content(setup_report):
+# Test: Check content of the policy document PDF
+def test_pdf_content():
     global non_compliance_list
     if os.path.exists(pdf_path):
         pdf_text = parse_pdf(pdf_path)
@@ -63,21 +71,27 @@ def test_pdf_content(setup_report):
         write_to_report("[!] 5.1.A. Policy document missing\n")
         non_compliance_list.append('5.1.A')
 
-def test_log_file_check(setup_report):
+# Test: Check content of the log file
+def test_log_file_check():
     global non_compliance_list
-    try:
-        with open(log_file_path, 'r') as log_file:
-            log_data = log_file.read()
-            if 'policy document' in log_data:
-                write_to_report("    5.2.F. Policy document communication confirmed\n")
-            else:
-                write_to_report("[!] 5.2.F. Policy document communication not confirmed\n")
-                non_compliance_list.append('5.2.F')
-    except FileNotFoundError:
-        write_to_report("[!] 5.2.F. Error reading log file\n")
+    if os.path.exists(log_file_path):
+        try:
+            with open(log_file_path, 'r') as log_file:
+                log_data = log_file.read().lower()
+                if 'policy document' in log_data:
+                    write_to_report("    5.2.F. Policy document communication confirmed\n")
+                else:
+                    write_to_report("[!] 5.2.F. Policy document communication not confirmed\n")
+                    non_compliance_list.append('5.2.F')
+        except Exception as e:
+            write_to_report("[!] 5.2.F. Error reading log file\n")
+            non_compliance_list.append('5.2.F')
+    else:
+        write_to_report("[!] 5.2.F. Log file missing\n")
         non_compliance_list.append('5.2.F')
 
-def test_risk_treatment_plan(setup_report):
+# Test: Check if the risk treatment plan exists
+def test_risk_treatment_plan():
     global non_compliance_list
     if os.path.exists(risk_treatment_plan_path):
         write_to_report("    8.1.A. Risk Treatment Plan exists\n")
@@ -85,6 +99,5 @@ def test_risk_treatment_plan(setup_report):
         write_to_report("[!] 8.1.A. Risk Treatment Plan is missing!\n")
         non_compliance_list.append('8.1.A')
 
-# To run the test, execute the following:
+# To run the tests, execute this script with pytest:
 # pytest test.py
-
