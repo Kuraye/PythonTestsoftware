@@ -37,8 +37,14 @@ pipeline {
 
         stage('Run Linter') {
             steps {
-                withEnv(["PATH+VENV": "${env.WORKSPACE}/venv/bin:${env.PATH}"]) {
-                    sh 'pylint PythonTestSoftware/'  // Analyze Python files in this directory
+                script {
+                    sh '''
+                        /bin/bash -c "
+                            source $VENV_DIR/bin/activate  # Activate the virtual environment
+                            export PATH=${env.WORKSPACE}/venv/bin:$PATH  # Modify PATH to include virtual env directory
+                            pylint PythonTestSoftware/  # Analyze Python files in this directory
+                        "
+                    '''
                 }
             }
         }
