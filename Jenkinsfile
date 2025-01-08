@@ -8,6 +8,19 @@ pipeline {
     }
 
     stages {
+        stage('Test Variable Substitution') {
+            steps {
+                script {
+                    sh '''
+                        /bin/bash -c "
+                            echo \"MY_VAR: \${MY_VAR}\"
+                        "
+                    '''
+                }
+            }
+        }
+
+    stages {
         stage('Clean Workspace') {
             steps {
                 cleanWs()
