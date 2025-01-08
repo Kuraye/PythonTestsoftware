@@ -25,8 +25,8 @@ pipeline {
                 script {
                     sh '''
                         /bin/bash -c "
-                            echo \"PYTHON_HOME: \$PYTHON_HOME\" 
-                            \$PYTHON_HOME -m venv \$VENV_DIR 
+                            echo \"PYTHON_HOME: \${PYTHON_HOME}\" 
+                            \${PYTHON_HOME} -m venv \$VENV_DIR 
                             source \$VENV_DIR/bin/activate
                             pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
                         "
