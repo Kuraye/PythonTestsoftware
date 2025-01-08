@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clean Workspace') {
             steps {
-                cleanWs()  // Clean the workspace at the start of the pipeline
+                cleanWs() // Clean the workspace at the start of the pipeline
             }
         }
 
@@ -27,21 +27,21 @@ pipeline {
                         /bin/bash -c "
                             $PYTHON_HOME -m venv $VENV_DIR  # Create a virtual environment
                             source $VENV_DIR/bin/activate   # Activate the virtual environment
-                            pip install --upgrade pip  # Upgrade pip
+                            pip install --upgrade pip      # Upgrade pip
                             pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
-                            
                         "
                     '''
                 }
             }
         }
+
         stage('Run Linter') {
             steps {
                 withEnv(["PATH+VENV": "${env.WORKSPACE}/venv/bin:${env.PATH}"]) {
-                    sh 'pylint PythonTestSoftware/' 
-                    // Or 'flake8 your_project_folder' 
-                    // Or 'mypy your_project_folder'
+                    sh 'pylint PythonTestSoftware/'  // Analyze Python files in this directory
                 }
+            }
+        }
 
         stage('Run Tests') {
             steps {
@@ -56,7 +56,7 @@ pipeline {
             }
             post {
                 always {
-                    junit 'report.xml'  // Publish the test results
+                    junit 'report.xml' // Publish the test results
                 }
             }
         }
