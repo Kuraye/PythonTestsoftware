@@ -4,13 +4,13 @@ pipeline {
     environment {
         PYTHON_HOME = '/usr/bin/python3'
         PIP_HOME = '/usr/bin/pip3'
-        VENV_DIR = 'venv' 
+        VENV_DIR = 'venv'
     }
 
     stages {
         stage('Clean Workspace') {
             steps {
-                cleanWs() 
+                cleanWs()
             }
         }
 
@@ -25,8 +25,9 @@ pipeline {
                 script {
                     sh '''
                         /bin/bash -c "
-                            $PYTHON_HOME -m venv $VENV_DIR  # Create a virtual environment
-                            source $VENV_DIR/bin/activate   # Activate the virtual environment
+                            echo \"PYTHON_HOME: \$PYTHON_HOME\" 
+                            \$PYTHON_HOME -m venv \$VENV_DIR 
+                            source \$VENV_DIR/bin/activate
                             pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
                         "
                     '''
@@ -39,9 +40,9 @@ pipeline {
                 script {
                     sh '''
                         /bin/bash -c "
-                            source $VENV_DIR/bin/activate  # Activate the virtual environment
-                            export PATH=${env.WORKSPACE}/venv/bin:$PATH  # Modify PATH to include virtual env directory
-                            pylint PythonTestSoftware/  # Analyze Python files in this directory
+                            source \$VENV_DIR/bin/activate
+                            export PATH="\${env.WORKSPACE}/venv/bin:\$PATH"
+                            pylint PythonTestSoftware/
                         "
                     '''
                 }
@@ -53,7 +54,7 @@ pipeline {
                 script {
                     sh '''
                         /bin/bash -c "
-                            source $VENV_DIR/bin/activate
+                            source \$VENV_DIR/bin/activate
                             pytest --junitxml=report.xml
                         "
                     '''
@@ -61,7 +62,7 @@ pipeline {
             }
             post {
                 always {
-                    junit 'report.xml' // Publish the test results
+                    junit 'report.xml'
                 }
             }
         }
