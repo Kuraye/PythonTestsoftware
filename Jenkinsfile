@@ -4,13 +4,13 @@ pipeline {
     environment {
         PYTHON_HOME = '/usr/bin/python3'
         PIP_HOME = '/usr/bin/pip3'
-        VENV_DIR = 'venv'  // Virtual environment directory path
+        VENV_DIR = 'venv' 
     }
 
     stages {
         stage('Clean Workspace') {
             steps {
-                cleanWs() // Clean the workspace at the start of the pipeline
+                cleanWs() 
             }
         }
 
