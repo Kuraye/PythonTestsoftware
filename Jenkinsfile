@@ -28,7 +28,8 @@ pipeline {
                             $PYTHON_HOME -m venv $VENV_DIR  # Create a virtual environment
                             source $VENV_DIR/bin/activate   # Activate the virtual environment
                             pip install --upgrade pip  # Upgrade pip
-                            pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest
+                            pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
+                            
                         "
                     '''
                 }
