@@ -35,6 +35,13 @@ pipeline {
                 }
             }
         }
+        stage('Run Linter') {
+            steps {
+                withEnv(["PATH+VENV": "${env.WORKSPACE}/venv/bin:${env.PATH}"]) {
+                    sh 'pylint PythonTestSoftware/' 
+                    // Or 'flake8 your_project_folder' 
+                    // Or 'mypy your_project_folder'
+                }
 
         stage('Run Tests') {
             steps {
