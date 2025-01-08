@@ -5,15 +5,16 @@ pipeline {
         PYTHON_HOME = '/usr/bin/python3'
         PIP_HOME = '/usr/bin/pip3'
         VENV_DIR = 'venv'
+        MY_VAR = 'This is a test variable' 
     }
 
-    stages { 
+    stages {
         stage('Test Variable Substitution') {
             steps {
                 script {
                     sh '''
                         /bin/bash -c "
-                            echo \"MY_VAR: \${MY_VAR}\"
+                            echo \"MY_VAR: \${MY_VAR}\" 
                         "
                     '''
                 }
