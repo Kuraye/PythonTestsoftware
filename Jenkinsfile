@@ -20,21 +20,26 @@ pipeline {
             }
         }
 
-        stage('Set Up Python Environment') {
-            steps {
-                script {
-                    sh '''
-                        cat script.sh.copy > script_content.log
-                        /bin/bash -c "
-                            echo \"PYTHON_HOME: \${PYTHON_HOME}\"
-                            \${PYTHON_HOME} -m venv \$VENV_DIR
-                            source \$VENV_DIR/bin/activate
-                            pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
-                        "
-                    '''
+          stage('Set Up Python Environment') {
+                    steps {
+                        script {
+                            sh '''
+                                /bin/bash -c "
+                                    echo \"PYTHON_HOME: \${PYTHON_HOME}\"
+                                    # Check if PYTHON_HOME is set and executable
+                                    if [[ -x "\${PYTHON_HOME}" ]]; then
+                                        \${PYTHON_HOME} -m venv \$VENV_DIR
+                                    else
+                                        echo "ERROR: PYTHON_HOME is not set or not executable."
+                                        exit 1
+                                    fi
+                                    source \$VENV_DIR/bin/activate
+                                    pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
+                                "
+                            '''
+                        }
+                    }
                 }
-            }
-        }
 
         stage('Run Linter') {
             steps {
