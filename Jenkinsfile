@@ -5,7 +5,6 @@ pipeline {
         PYTHON_HOME = '/usr/bin/python3'
         PIP_HOME = '/usr/bin/pip3'
         VENV_DIR = 'venv'
-        MY_VAR = 'This is a test variable' 
     }
 
     stages {
@@ -14,7 +13,7 @@ pipeline {
                 script {
                     sh '''
                         /bin/bash -c "
-                            echo \"MY_VAR: \${MY_VAR}\" 
+                            echo \"MY_VAR: \${MY_VAR}\"
                         "
                     '''
                 }
@@ -37,14 +36,11 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        cat /var/jenkins_home/workspace/Python Pipeline@tmp/durable-c9375f2d/script.sh.copy
                         /bin/bash -c "
-                            cat /var/jenkins_home/workspace/Python Pipeline@tmp/durable-c9375f2d/script.sh.copy  # Print the script content
-                            echo PYTHON_HOME: \${PYTHON_HOME}
+                            echo \"PYTHON_HOME: \${PYTHON_HOME}\"
                             \${PYTHON_HOME} -m venv \$VENV_DIR
                             source \$VENV_DIR/bin/activate
                             pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
-                            sleep 60 
                         "
                     '''
                 }
@@ -79,6 +75,14 @@ pipeline {
             post {
                 always {
                     junit 'report.xml'
+                    parseClassicLog rules: [
+                        [
+                            ruleName: 'Bad Substitution',
+                            ruleExpression: '.*script.sh.copy: 2: .*',
+                            category: 'Error',
+                            severity: 'High'
+                        ]
+                    ]
                 }
             }
         }
