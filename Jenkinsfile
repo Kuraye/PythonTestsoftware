@@ -37,9 +37,9 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        cat script.sh.copy
+                        cat /var/jenkins_home/workspace/Python Pipeline@tmp/durable-c9375f2d/script.sh.copy
                         /bin/bash -c "
-                            cat script.sh.copy  # Print the script content
+                            cat /var/jenkins_home/workspace/Python Pipeline@tmp/durable-c9375f2d/script.sh.copy  # Print the script content
                             echo PYTHON_HOME: \${PYTHON_HOME}
                             \${PYTHON_HOME} -m venv \$VENV_DIR
                             source \$VENV_DIR/bin/activate
