@@ -45,12 +45,10 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        /bin/bash -c "
-                            source \$VENV_DIR/bin/activate
-                            export PATH="\${env.WORKSPACE}/venv/bin:\$PATH"
-                            pylint PythonTestSoftware/
-                        "
-                    '''
+                        source "$VENV_DIR/bin/activate"
+                        export PATH="$VENV_DIR/bin:$PATH"
+                        pylint PythonTestSoftware/ 
+                        '''
                 }
             }
         }
