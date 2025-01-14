@@ -42,6 +42,7 @@ pipeline {
                             \${PYTHON_HOME} -m venv \$VENV_DIR
                             source \$VENV_DIR/bin/activate
                             pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
+                            sleep 60 
                         "
                     '''
                 }
