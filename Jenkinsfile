@@ -27,7 +27,7 @@ pipeline {
           echo PYTHON_HOME: /usr/bin/python3
           # Check if PYTHON_HOME is set and executable
           if [[ -x /usr/bin/python3 ]]; then
-            /usr/bin/python3 -m venv $VENV_DIR  # Use $VENV_DIR variable
+            virtualenv --python=/usr/bin/python3 $VENV_DIR  # Use virtualenv with --python option
           else
             echo ERROR: PYTHON_HOME is not set or not executable.
             exit 1
