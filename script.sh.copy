@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Create a virtual environment (replace 'venv' with your desired name)
+python3 -m venv venv
+
+# Activate the virtual environment
+source venv/bin/activate
+
+# Install required Python packages (modify the list as needed)
+pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
+
+# Additional commands (if any)
+
+# Deactivate the virtual environment (optional)
+# deactivate
