@@ -45,11 +45,21 @@ pipeline {
           sh '''
           source "$VENV_DIR/bin/activate"
           export PATH="$VENV_DIR/bin:$PATH"
-          pylint PythonTestSoftware/  # Removed trailing space
+          pylint PythonTestSoftware/
           '''
         }
       }
     }
+    stage('Run Application') {
+    steps {
+        script {
+            sh '''
+            source "$VENV_DIR/bin/activate"
+            python PythonTestSoftware/main.py 
+            '''
+        }
+    }
+}
 
     stage('Run Tests') {
       steps {
