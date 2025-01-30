@@ -23,10 +23,10 @@ pipeline {
    stage('Set Up Python Environment') {
     steps {
         script {
-            bash ''' # Use bash step
+            sh '''
                 #!/bin/bash
                 echo "PYTHON_HOME: $PYTHON_HOME"
-                if [[ -x "$PYTHON_HOME" ]]; then # Now this will work
+                if [[ -x "$PYTHON_HOME" ]]; then
                     virtualenv --python="$PYTHON_HOME" "$VENV_DIR"
                 else
                     echo "ERROR: PYTHON_HOME is not set or not executable."
