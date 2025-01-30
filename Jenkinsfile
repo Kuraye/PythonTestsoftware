@@ -31,7 +31,7 @@ pipeline {
                       echo "ERROR: PYTHON_HOME is not set or not executable."
                       exit 1
                   fi
-                  . "$VENV_DIR/bin/activate"
+                  . "$VENV_DIR/bin/activate"  # Use . instead of source
                   pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
               '''
             }
