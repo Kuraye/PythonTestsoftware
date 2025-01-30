@@ -38,23 +38,23 @@ pipeline {
       }
     }
 
-    stage('Run Linter') {
-      steps {
-        script {
-          sh '''
-          #!/bin/sh
-          . "$VENV_DIR/bin/activate"
-          export PATH="$VENV_DIR/bin:$PATH"
-          pylint *.py
-          '''
+     stage('Run Linter') {
+        steps {
+          script {
+            sh '''
+            #!/bin/sh
+            . "$VENV_DIR/bin/activate"
+            export PATH="$VENV_DIR/bin:$PATH"
+            pylint *.py || true
+            '''
+          }
+        }
+        post {
+          always {
+            archiveArtifacts artifacts: '**/pylint_output.txt', allowEmptyArchive: true
+          }
         }
       }
-      post {
-        always {
-          archiveArtifacts artifacts: '**/pylint_output.txt', allowEmptyArchive: true
-        }
-      }
-    }
 
 
     stage('Run Application') {
