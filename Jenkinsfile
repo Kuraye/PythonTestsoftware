@@ -32,7 +32,6 @@ pipeline {
                       exit 1
                   fi
                   . "$VENV_DIR/bin/activate"
-                  pip install --upgrade pip
                   pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
               '''
             }
