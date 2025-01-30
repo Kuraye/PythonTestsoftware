@@ -45,7 +45,7 @@ pipeline {
           #!/bin/sh
           . "$VENV_DIR/bin/activate"
           export PATH="$VENV_DIR/bin:$PATH"
-          pylint PythonTestSoftware/
+          pylint $(find PythonTestSoftware -name "*.py")
           '''
         }
       }
@@ -55,6 +55,7 @@ pipeline {
         }
       }
     }
+
 
     stage('Run Application') {
       steps {
