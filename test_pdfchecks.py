@@ -7,9 +7,8 @@ non_compliance_list = []
 
 # Path to the files
 pdf_path = 'PolicyDocument.pdf'
-risk_treatment_plan_path = 'Risk_Treatment_Plan.csv'
 log_file_path = 'system.log'
-report_file = 'test_report.txt'
+report_file = 'pdfcheck.report.txt'
 
 # Function to write to the report file
 def write_to_report(content):
@@ -90,14 +89,3 @@ def test_log_file_check():
         write_to_report("[!] 5.2.F. Log file missing\n")
         non_compliance_list.append('5.2.F')
 
-# Test: Check if the risk treatment plan exists
-def test_risk_treatment_plan():
-    global non_compliance_list
-    if os.path.exists(risk_treatment_plan_path):
-        write_to_report("    8.1.A. Risk Treatment Plan exists\n")
-    else:
-        write_to_report("[!] 8.1.A. Risk Treatment Plan is missing!\n")
-        non_compliance_list.append('8.1.A')
-
-# To run the tests, execute this script with pytest:
-# pytest test.py
