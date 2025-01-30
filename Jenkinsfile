@@ -24,6 +24,7 @@ pipeline {
       steps {
         script {
           sh '''
+          #!/bin/bash
           echo "PYTHON_HOME: $PYTHON_HOME"
           # Check if PYTHON_HOME is set and executable
           if [[ -x "$PYTHON_HOME" ]]; then
@@ -43,6 +44,7 @@ pipeline {
       steps {
         script {
           sh '''
+          #!/bin/bash
           source "$VENV_DIR/bin/activate"
           export PATH="$VENV_DIR/bin:$PATH"
           pylint PythonTestSoftware/
@@ -51,7 +53,6 @@ pipeline {
       }
       post {
         always {
-          // Archive the linting results if needed
           archiveArtifacts artifacts: '**/pylint_output.txt', allowEmptyArchive: true
         }
       }
@@ -61,6 +62,7 @@ pipeline {
       steps {
         script {
           sh '''
+          #!/bin/bash
           source "$VENV_DIR/bin/activate"
           python PythonTestSoftware/main.py 
           '''
@@ -72,24 +74,15 @@ pipeline {
       steps {
         script {
           sh '''
-          /bin/bash -c "
-          source \$VENV_DIR/bin/activate
+          #!/bin/bash
+          source "$VENV_DIR/bin/activate"
           pytest --junitxml=report.xml
-          "
           '''
         }
       }
       post {
         always {
           junit 'report.xml'
-          parseClassicLog rules: [
-            [
-              ruleName: 'Bad Substitution',
-              ruleExpression: '.*script.sh.copy: 2: .*',
-              category: 'Error',
-              severity: 'High'
-            ]
-          ]
         }
       }
     }
