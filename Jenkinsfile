@@ -20,29 +20,30 @@ pipeline {
       }
     }
 
-   stage('Set Up Python Environment') {
-    steps {
+    stage('Set Up Python Environment') {
+      steps {
         script {
-            sh '''
-                  echo "PYTHON_HOME: $PYTHON_HOME"
-                  if [ -x "$PYTHON_HOME" ]; then
-                      python3 -m venv "$VENV_DIR"
-                  else
-                      echo "ERROR: PYTHON_HOME is not set or not executable."
-                      exit 1
-                  fi
-                  . "$VENV_DIR/bin/activate"  # Use . instead of source
-                  pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
-              '''
-            }
+          sh '''
+          echo "PYTHON_HOME: $PYTHON_HOME"
+          if [ -x "$PYTHON_HOME" ]; then
+              python3 -m venv "$VENV_DIR"
+          else
+              echo "ERROR: PYTHON_HOME is not set or not executable."
+              exit 1
+          fi
+          . "$VENV_DIR/bin/activate"
+          pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
+          '''
         }
+      }
     }
+
     stage('Run Linter') {
       steps {
         script {
           sh '''
-          #!/bin/bash
-          source "$VENV_DIR/bin/activate"
+          #!/bin/sh
+          . "$VENV_DIR/bin/activate"
           export PATH="$VENV_DIR/bin:$PATH"
           pylint PythonTestSoftware/
           '''
@@ -59,8 +60,8 @@ pipeline {
       steps {
         script {
           sh '''
-          #!/bin/bash
-          source "$VENV_DIR/bin/activate"
+          #!/bin/sh
+          . "$VENV_DIR/bin/activate"
           python PythonTestSoftware/main.py 
           '''
         }
@@ -71,8 +72,8 @@ pipeline {
       steps {
         script {
           sh '''
-          #!/bin/bash
-          source "$VENV_DIR/bin/activate"
+          #!/bin/sh
+          . "$VENV_DIR/bin/activate"
           pytest --junitxml=report.xml
           '''
         }
