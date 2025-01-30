@@ -38,42 +38,40 @@ pipeline {
       }
     }
 
-     stage('Run Linter') {
-        steps {
-          script {
-            sh '''
-            #!/bin/sh
-            . "$VENV_DIR/bin/activate"
-            export PATH="$VENV_DIR/bin:$PATH"
-            pylint *.py || true
-            '''
-          }
-        }
-        post {
-          always {
-            archiveArtifacts artifacts: '**/pylint_output.txt', allowEmptyArchive: true
-          }
+    stage('Run Linter') {
+      steps {
+        script {
+          sh '''
+          #!/bin/sh
+          . "$VENV_DIR/bin/activate"
+          export PATH="$VENV_DIR/bin:$PATH"
+          pylint *.py || true
+          '''
         }
       }
-
+      post {
+        always {
+          archiveArtifacts artifacts: '**/pylint_output.txt', allowEmptyArchive: true
+        }
+      }
+    }
 
     stage('Run Application') {
       steps {
         script {
           sh '''
-          . venv/bin/activate
-          python main.py  
+          . "$VENV_DIR/bin/activate"
+          nohup python main.py & 
+          echo $! > flask_pid.txt
           '''
         }
       }
     }
 
-
     stage('Run Tests') {
       steps {
         script {
           sh '''
-          #!/bin/sh
           . "$VENV_DIR/bin/activate"
           pytest --junitxml=report.xml
           '''
@@ -82,6 +80,16 @@ pipeline {
       post {
         always {
           junit 'report.xml'
+        }
+      }
+    }
+
+    stage('Stop Flask Application') {
+      steps {
+        script {
+          sh '''
+          kill $(cat flask_pid.txt) || true
+          '''
         }
       }
     }
