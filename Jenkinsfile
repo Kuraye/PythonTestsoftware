@@ -20,26 +20,24 @@ pipeline {
       }
     }
 
-    stage('Set Up Python Environment') {
-      steps {
+   stage('Set Up Python Environment') {
+    steps {
         script {
-          sh '''
-          #!/bin/bash
-          echo "PYTHON_HOME: $PYTHON_HOME"
-          # Check if PYTHON_HOME is set and executable
-          if [[ -x "$PYTHON_HOME" ]]; then
-            virtualenv --python="$PYTHON_HOME" "$VENV_DIR"
-          else
-            echo "ERROR: PYTHON_HOME is not set or not executable."
-            exit 1
-          fi
-          source "$VENV_DIR/bin/activate"
-          pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
-          '''
+            bash ''' # Use bash step
+                #!/bin/bash
+                echo "PYTHON_HOME: $PYTHON_HOME"
+                if [[ -x "$PYTHON_HOME" ]]; then # Now this will work
+                    virtualenv --python="$PYTHON_HOME" "$VENV_DIR"
+                else
+                    echo "ERROR: PYTHON_HOME is not set or not executable."
+                    exit 1
+                fi
+                source "$VENV_DIR/bin/activate"
+                pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
+            '''
+            }
         }
-      }
     }
-
     stage('Run Linter') {
       steps {
         script {
