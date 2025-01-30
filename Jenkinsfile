@@ -24,15 +24,15 @@ pipeline {
       steps {
         script {
           sh '''
-          echo PYTHON_HOME: /usr/bin/python3
+          echo "PYTHON_HOME: $PYTHON_HOME"
           # Check if PYTHON_HOME is set and executable
-          if [[ -x /usr/bin/python3 ]]; then
-            virtualenv --python=/usr/bin/python3 $VENV_DIR  # Use virtualenv with --python option
+          if [[ -x "$PYTHON_HOME" ]]; then
+            virtualenv --python="$PYTHON_HOME" "$VENV_DIR"
           else
-            echo ERROR: PYTHON_HOME is not set or not executable.
+            echo "ERROR: PYTHON_HOME is not set or not executable."
             exit 1
           fi
-          source $VENV_DIR/bin/activate
+          source "$VENV_DIR/bin/activate"
           pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
           '''
         }
@@ -49,17 +49,24 @@ pipeline {
           '''
         }
       }
-    }
-    stage('Run Application') {
-    steps {
-        script {
-            sh '''
-            source "$VENV_DIR/bin/activate"
-            python PythonTestSoftware/main.py 
-            '''
+      post {
+        always {
+          // Archive the linting results if needed
+          archiveArtifacts artifacts: '**/pylint_output.txt', allowEmptyArchive: true
         }
+      }
     }
-}
+
+    stage('Run Application') {
+      steps {
+        script {
+          sh '''
+          source "$VENV_DIR/bin/activate"
+          python PythonTestSoftware/main.py 
+          '''
+        }
+      }
+    }
 
     stage('Run Tests') {
       steps {
