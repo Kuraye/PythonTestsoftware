@@ -61,13 +61,13 @@ pipeline {
       steps {
         script {
           sh '''
-          #!/bin/sh
-          . "$VENV_DIR/bin/activate"
-          python PythonTestSoftware/main.py 
+          . venv/bin/activate
+          python main.py  
           '''
         }
       }
     }
+
 
     stage('Run Tests') {
       steps {
