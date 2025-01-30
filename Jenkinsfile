@@ -32,7 +32,7 @@ pipeline {
               exit 1
           fi
           . "$VENV_DIR/bin/activate"
-          pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint
+          pip install flask flask-wtf wtforms werkzeug flask-session splitter PyPDF2 pytest pylint csv
           '''
         }
       }
