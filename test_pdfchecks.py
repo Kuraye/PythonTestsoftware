@@ -2,47 +2,42 @@ import os
 import pytest
 import PyPDF2
 
-# Define the non-compliance list globally so we can use it in our tests
 non_compliance_list = []
 
-# Path to the files
 pdf_path = 'PolicyDocument.pdf'
 log_file_path = 'system.log'
 report_file = 'pdfcheck.report.txt'
 
-# Function to write to the report file
 def write_to_report(content):
     with open(report_file, 'a') as f:
         f.write(content)
 
-# Function to parse the PDF and extract text
 def parse_pdf(pdf_path):
     try:
         with open(pdf_path, 'rb') as f:
             reader = PyPDF2.PdfReader(f)
             text = ''
             for page in reader.pages:
-                text += page.extract_text().lower()  # Ensure text is in lowercase
+                text += page.extract_text().lower() 
         return text
     except Exception as e:
-        return ""  # Return an empty string if the file is unreadable
+        return ""  
 
-# Session-scoped fixture to initialize the report only once
 @pytest.fixture(scope='session', autouse=True)
 def setup_report():
     global non_compliance_list
-    non_compliance_list.clear()  # Clear the non-compliance list at the start
-    # Initialize the report
+    non_compliance_list.clear()  
+
     with open(report_file, 'w') as f:
         f.write("This document exists as a report where you can see which guidelines you haven't implemented yet in the project. At the end of the list, you will be able to see which non-compliances you still have.\n")
-    yield  # Allow tests to run
-    # Write the non-compliance list at the end of the session
+    yield 
+
     with open(report_file, 'a') as f:
         f.write("\nNon-Compliance List:\n")
         for item in non_compliance_list:
             f.write(f"- {item}\n")
 
-# Test: Check content of the policy document PDF
+
 def test_pdf_content():
     global non_compliance_list
     if os.path.exists(pdf_path):
