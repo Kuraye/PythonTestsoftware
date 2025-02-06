@@ -57,6 +57,5 @@ def test_csv_file_exists_and_validates_content():
             file.write("[!] 8.3.1a. Risk Treatment Plan is missing!\n")
         non_compliance_list.append('8.3.1a')
 
-    # Attach the non_compliance_list to the fixture for after test cleanup
     setup_and_teardown.non_compliance_list = non_compliance_list
 
